@@ -51,26 +51,49 @@ void loop() {
   *  The actual value doesn't matter, just the total number of ones
   */
   switchState = B0000;
-  switchState |= digitalRead(2);
-  switchState |= digitalRead(3) << 1;
-  switchState |= digitalRead(4) << 2;
-  switchState |= digitalRead(5) << 3;
+  switchState |= digitalRead(2);	//servo[0]
+  switchState |= digitalRead(3) << 1;   //servo[1]
+  switchState |= digitalRead(4) << 2;	//servo[2]
+  switchState |= digitalRead(5) << 3;	//servo[3]
   
   if( mission == flying){
-    if( ~(switchState || B0000) )
+    if( switchState )
       mission = landing;
   } else if (mission == landed){
-    if( switchState && B1111 ){
+    if( ~switchState ){
       mission = flying;
 
       // Add code to retract legs
      
      }
   }  else if (mission == landing){
-    if( switchState && B1111 )
+    if( switchState & B1111 )
       mission = landed;
 
-    if( switchState && B0001 ){
+    // Check servo[0] switch
+    if( switchState & B0001 ){
+      servo[0].write(90);
+    } else
+      servo[0].write(0);
+    
+    // Check servo[1] switch
+    if( switchState & B0010 ){
+      servo[1].write(90);
+    } else
+      servo[1].write(0);
+
+    // Check servo[2] switch
+    if( switchState & B0100 ){
+      servo[2].write(90);
+    } else
+      servo[2].write(0);
+
+    // Check servo[3] switch
+    if( switchState & B1000 ){
+      servo[3].write(90);
+    } else
+      servo[3].write(0);
+
 
   }
 
