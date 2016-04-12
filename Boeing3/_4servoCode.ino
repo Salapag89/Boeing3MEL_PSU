@@ -7,15 +7,14 @@ byte GYRO = B110100;    //PSU
 
 int BAUD = 9600;   //Bitrate for gyro, need to check the datasheet to find the correct rate
 
-Servo servo1;
-Servo servo2;
-Servo servo3;
-Servo servo4;
-int switchState1 = 0;
-int switchState2 = 0;
-int switchState3 = 0;
-int switchState4 = 0;
-int OFF = 0;
+enum mission {
+  landing,
+  landed,
+  flying
+  }
+
+Servo servo[4];
+byte switchState = B0000;
 unsigned long TIME = 0;
 long ELAPSED = 3000;
 
@@ -25,11 +24,15 @@ void setup() {
  Wire.begin();
  Serial.begin(BAUD);
 
+ // Init mission as flying
+ mission = flying;
+
  // Init the servos
- servo1.attach(8);
- servo2.attach(9);
- servo3.attach(10);
- servo4.attach(11);
+ servo[0].attach(8);
+ servo[1].attach(9);
+ servo[2].attach(10);
+ servo[3].attach(11);
+ 
  // Init the switches
  pinMode(2,INPUT);
  pinMode(3,INPUT);
@@ -38,109 +41,37 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  if(OFF == 0){
-    switchState1 = digitalRead(2);
-    switchState2 = digitalRead(3);
-    switchState3 = digitalRead(4);
-    switchState4 = digitalRead(5);
-  } else if(OFF == 1){
-    switchState1 = 1;
-    switchState2 = 1;
-    switchState3 = 1;
-    switchState4 = 1;
+  /* switchState is now hotcoded
+  *  4 bit value, 1 bit for each switch
+  *  Ex: 0000 = None Pressed
+  *      0010 = One Pressed
+  *      1001 = Two Pressed
+  *      1110 = Three Pressed
+  *      1111 = Four Pressed
+  *  The actual value doesn't matter, just the total number of ones
+  */
+  switchState = B0000;
+  switchState |= digitalRead(2);
+  switchState |= digitalRead(3) << 1;
+  switchState |= digitalRead(4) << 2;
+  switchState |= digitalRead(5) << 3;
+  
+  if( mission == flying){
+    if( ~(switchState || B0000) )
+      mission = landing;
+  } else if (mission == landed){
+    if( switchState && B1111 ){
+      mission = flying;
+
+      // Add code to retract legs
+     
+     }
+  }  else if (mission == landing){
+    if( switchState && B1111 )
+      mission = landed;
+
+    if( switchState && B0001 ){
+
   }
 
-  while(switchState1 == LOW && switchState2 == LOW && switchState3 == LOW && switchState4 == LOW){
-    switchState1 = digitalRead(2);
-    switchState2 = digitalRead(3);
-    switchState3 = digitalRead(4);
-    switchState4 = digitalRead(5);
-    servo1.write(90);
-    servo2.write(90);
-    servo3.write(90);
-    servo4.write(90);
-  }
-
-  //all switches pressed
-  if (switchState1 == HIGH && switchState2 == HIGH && switchState3 == HIGH && switchState4 == HIGH){
-    servo1.write(90);
-    servo2.write(90);
-    servo3.write(90);
-    servo4.write(87); //one switch pressed from here
-    TIME = millis();
-  }if (TIME > ELAPSED){
-    OFF = 1;
-  } else if(switchState1 == HIGH && switchState2 == LOW && switchState3 == LOW && switchState4 == LOW){
-    servo1.write(90);
-    servo2.write(0);
-    servo3.write(0);
-    servo4.write(0);
-  } else if(switchState1 == LOW && switchState2 == HIGH && switchState3 == LOW && switchState4 == LOW){
-    servo1.write(0);
-    servo2.write(90);
-    servo3.write(0);
-    servo4.write(0); 
-  } else if(switchState1 == LOW && switchState2 == LOW && switchState3 == HIGH && switchState4 == LOW){
-    servo1.write(0);
-    servo2.write(0);
-    servo3.write(90);
-    servo4.write(0);
-  } else if(switchState1 == LOW && switchState2 == LOW && switchState3 == LOW && switchState4 == HIGH){
-    servo1.write(0);
-    servo2.write(0);
-    servo3.write(0);
-    servo4.write(90); 
-  //two switches are pressed from here
-  } else if(switchState1 == LOW && switchState2 == LOW && switchState3 == HIGH && switchState4 == HIGH){
-    servo1.write(0);
-    servo2.write(0);
-    servo3.write(90);
-    servo4.write(90);
-  } else if(switchState1 == LOW && switchState2 == HIGH && switchState3 == LOW && switchState4 == HIGH){
-    servo1.write(0);
-    servo2.write(90);
-    servo3.write(0);
-    servo4.write(90);
-  } else if(switchState1 == LOW && switchState2 == HIGH && switchState3 == HIGH && switchState4 == LOW){
-    servo1.write(0);
-    servo2.write(90);
-    servo3.write(90);
-    servo4.write(0);
-  } else if(switchState1 == HIGH && switchState2 == LOW && switchState3 == LOW && switchState4 == HIGH){
-    servo1.write(90);
-    servo2.write(0);
-    servo3.write(0);
-    servo4.write(90);
-  } else if(switchState1 == HIGH && switchState2 == LOW && switchState3 == HIGH && switchState4 == LOW){
-    servo1.write(90);
-    servo2.write(0);
-    servo3.write(90);
-    servo4.write(0);
-  } else if(switchState1 == HIGH && switchState2 == HIGH && switchState3 == LOW && switchState4 == LOW){
-    servo1.write(90);
-    servo2.write(90);
-    servo3.write(0);
-    servo4.write(0);//3swtiches pressed
-  } else if(switchState1 == LOW && switchState2 == HIGH && switchState3 == HIGH && switchState4 == HIGH){
-    servo1.write(0);
-    servo2.write(90);
-    servo3.write(90);
-    servo4.write(90);
-  } else if(switchState1 == HIGH && switchState2 == LOW && switchState3 == HIGH && switchState4 == HIGH){
-    servo1.write(90);
-    servo2.write(0);
-    servo3.write(90);
-    servo4.write(90);
-  } else if(switchState1 == HIGH && switchState2 == HIGH && switchState3 == LOW && switchState4 == HIGH){
-    servo1.write(90);
-    servo2.write(90);
-    servo3.write(0);
-    servo4.write(90);
-  } else if(switchState1 == HIGH && switchState2 == HIGH && switchState3 == HIGH && switchState4 == LOW){
-    servo1.write(90);
-    servo2.write(90);
-    servo3.write(90);
-    servo4.write(0);
-  }
 }
