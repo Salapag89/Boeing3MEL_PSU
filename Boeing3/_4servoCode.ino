@@ -2,10 +2,10 @@
 #include <Servo.h>
 
 // Address for the GYRO, uncomment the one you want, comment the one you don't
-byte GYRO = B110100;    //PSU
+//byte GYRO = B110100;    //PSU
 //byte GYRO = B110100;    //MEL
 
-int BAUD = 9600;   //Bitrate for gyro, need to check the datasheet to find the correct rate
+//int BAUD = 9600;   //Bitrate for gyro, need to check the datasheet to find the correct rate
 
 enum mission {
   landing,
@@ -15,14 +15,18 @@ enum mission {
 
 Servo servo[4];
 byte switchState = B0000;
-unsigned long TIME = 0;
-long ELAPSED = 3000;
+unsigned long TIME;
+unsigned long servoTime[4];
+
+int UP = 180;
+int STOP = 90;
+int DOWN = 0;
 
 void setup() {
 
  // Init i2c
- Wire.begin();
- Serial.begin(BAUD);
+ //Wire.begin();
+ //Serial.begin(BAUD);
 
  // Init mission as flying
  mission = flying;
@@ -57,8 +61,9 @@ void loop() {
   switchState |= digitalRead(5) << 3;	//servo[3]
   
   if( mission == flying){
-    if( switchState )
+    if( switchState ){
       mission = landing;
+    }
   } else if (mission == landed){
     if( ~switchState ){
       mission = flying;
@@ -72,29 +77,27 @@ void loop() {
 
     // Check servo[0] switch
     if( switchState & B0001 ){
-      servo[0].write(90);
+      servo[0].write(STOP);
     } else
-      servo[0].write(0);
+      servo[0].write(DOWN);
     
     // Check servo[1] switch
     if( switchState & B0010 ){
-      servo[1].write(90);
+      servo[1].write(STOP);
     } else
-      servo[1].write(0);
+      servo[1].write(DOWN);
 
     // Check servo[2] switch
     if( switchState & B0100 ){
-      servo[2].write(90);
+      servo[2].write(STOP);
     } else
-      servo[2].write(0);
+      servo[2].write(DOWN);
 
     // Check servo[3] switch
     if( switchState & B1000 ){
-      servo[3].write(90);
+      servo[3].write(STOP);
     } else
-      servo[3].write(0);
-
-
+      servo[3].write(DOWN);
   }
 
 }
