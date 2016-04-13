@@ -1,7 +1,7 @@
 #include <Write.h>
 #include <Servo.h>
 
-#define UP 180
+#define UP 110
 #define STOP 90
 #define DOWN 0
 
@@ -118,7 +118,7 @@ void loop() {
       servo[0].write(STOP);
 
       if( !servoTime[0] )
-        servoTime[0] = millis() - Time;
+        servoTime[0] = 4*(millis() - Time);
     
     } else
       servo[0].write(DOWN);
@@ -128,7 +128,7 @@ void loop() {
       servo[1].write(STOP);
 
       if( !servoTime[1] )
-        servoTime[1] = millis() - Time;
+        servoTime[1] = 4*(millis() - Time);
     
     } else
       servo[1].write(DOWN);
@@ -138,7 +138,7 @@ void loop() {
       servo[2].write(STOP);
 
       if( !servoTime[2] )
-        servoTime[2] = millis() - Time;
+        servoTime[2] = 4*(millis() - Time);
     
     } else
       servo[2].write(DOWN);
@@ -148,7 +148,7 @@ void loop() {
       servo[3].write(STOP);
 
       if( !servoTime[3] )
-        servoTime[3] = millis() - Time;
+        servoTime[3] = 4*(millis() - Time);
     
     } else
       servo[3].write(DOWN);
