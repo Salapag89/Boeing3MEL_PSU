@@ -19,7 +19,7 @@ enum mission {
 
 Servo servo[4];
 byte switchState;
-unsigned long time, runTime;
+unsigned long Time, runTime;
 unsigned long servoTime[4];
 
 void setup() {
@@ -69,7 +69,7 @@ void loop() {
     if( switchState ){
       mission = landing;
 
-      time = millis();
+      Time = millis();
       servoTime[0] = 0;
       servoTime[1] = 0;
       servoTime[2] = 0;
@@ -80,14 +80,14 @@ void loop() {
       mission = flying;
 
       switchState = B1111;
-      time = millis();
+      Time = millis();
       servo[0].write(UP);
       servo[1].write(UP);
       servo[2].write(UP);
       servo[3].write(UP);
 
       while(){
-        runTime = millis() - time;
+        runTime = millis() - Time;
         
         if( servoTime[0] <= runTime ){
 	  servo[0].write(STOP);
@@ -118,7 +118,7 @@ void loop() {
       servo[0].write(STOP);
 
       if( !servoTime[0] )
-        servoTime[0] = millis() - time;
+        servoTime[0] = millis() - Time;
     
     } else
       servo[0].write(DOWN);
@@ -128,7 +128,7 @@ void loop() {
       servo[1].write(STOP);
 
       if( !servoTime[1] )
-        servoTime[1] = millis() - time;
+        servoTime[1] = millis() - Time;
     
     } else
       servo[1].write(DOWN);
@@ -138,7 +138,7 @@ void loop() {
       servo[2].write(STOP);
 
       if( !servoTime[2] )
-        servoTime[2] = millis() - time;
+        servoTime[2] = millis() - Time;
     
     } else
       servo[2].write(DOWN);
@@ -148,7 +148,7 @@ void loop() {
       servo[3].write(STOP);
 
       if( !servoTime[3] )
-        servoTime[3] = millis() - time;
+        servoTime[3] = millis() - Time;
     
     } else
       servo[3].write(DOWN);
