@@ -1,6 +1,10 @@
 #include <Write.h>
 #include <Servo.h>
 
+#define UP 180
+#define STOP 90
+#define DOWN 0
+
 // Address for the GYRO, uncomment the one you want, comment the one you don't
 //byte GYRO = B110100;    //PSU
 //byte GYRO = B110100;    //MEL
@@ -14,13 +18,9 @@ enum mission {
   }
 
 Servo servo[4];
-byte switchState = B0000;
-unsigned long TIME;
+byte switchState;
+unsigned long time, runTime;
 unsigned long servoTime[4];
-
-int UP = 180;
-int STOP = 90;
-int DOWN = 0;
 
 void setup() {
 
@@ -37,6 +37,11 @@ void setup() {
  servo[2].attach(10);
  servo[3].attach(11);
  
+ servoTime[0] = 0;
+ servoTime[1] = 0;
+ servoTime[2] = 0;
+ servoTime[3] = 0;
+
  // Init the switches
  pinMode(2,INPUT);
  pinMode(3,INPUT);
@@ -63,13 +68,46 @@ void loop() {
   if( mission == flying){
     if( switchState ){
       mission = landing;
+
+      time = millis();
+      servoTime[0] = 0;
+      servoTime[1] = 0;
+      servoTime[2] = 0;
+      servoTime[3] = 0;
     }
   } else if (mission == landed){
     if( ~switchState ){
       mission = flying;
 
-      // Add code to retract legs
-     
+      switchState = B1111;
+      time = millis();
+      servo[0].write(UP);
+      servo[1].write(UP);
+      servo[2].write(UP);
+      servo[3].write(UP);
+
+      while(){
+        runTime = millis() - time;
+        
+        if( servoTime[0] <= runTime ){
+	  servo[0].write(STOP);
+	  switchState&= B1110;
+	}
+        if( servoTime[1] <= runTime ){
+	  servo[1].write(STOP);
+	  switchState&= B1101;
+	}
+        if( servoTime[2] <= runTime ){
+	  servo[2].write(STOP);
+	  switchState&= B1011;
+	}
+        if( servoTime[3] <= runTime ){
+	  servo[3].write(STOP);
+	  switchState&= B0111;
+	}
+
+	if( !switchState )
+	  break;
      }
   }  else if (mission == landing){
     if( switchState & B1111 )
@@ -78,24 +116,40 @@ void loop() {
     // Check servo[0] switch
     if( switchState & B0001 ){
       servo[0].write(STOP);
+
+      if( !servoTime[0] )
+        servoTime[0] = millis() - time;
+    
     } else
       servo[0].write(DOWN);
     
     // Check servo[1] switch
     if( switchState & B0010 ){
       servo[1].write(STOP);
+
+      if( !servoTime[1] )
+        servoTime[1] = millis() - time;
+    
     } else
       servo[1].write(DOWN);
 
     // Check servo[2] switch
     if( switchState & B0100 ){
       servo[2].write(STOP);
+
+      if( !servoTime[2] )
+        servoTime[2] = millis() - time;
+    
     } else
       servo[2].write(DOWN);
 
     // Check servo[3] switch
     if( switchState & B1000 ){
       servo[3].write(STOP);
+
+      if( !servoTime[3] )
+        servoTime[3] = millis() - time;
+    
     } else
       servo[3].write(DOWN);
   }
