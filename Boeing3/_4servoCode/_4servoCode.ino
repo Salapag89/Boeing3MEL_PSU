@@ -30,6 +30,8 @@ void setup() {
 	//Wire.begin();
 	//Serial.begin(BAUD);
 
+	Serial.begin(9600);
+
 	// Init mission as flying
 	mission = landed;
 
@@ -67,8 +69,12 @@ void loop() {
 	switchState |= digitalRead(5) << 2;	//servo[2]
 	switchState |= digitalRead(6) << 3;	//servo[3]
 	
+	Serial.print(switchState, BIN);
+	Serial.print('\n');
+
 	if( mission == flying){
 		if( switchState ){
+			Serial.print("landing\n");
 			mission = landing;
 
 			Time = millis();
@@ -79,6 +85,7 @@ void loop() {
 		}
 	} else if (mission == landed){
 		if( ~switchState ){
+			Serial.print("flying\n");
 			mission = flying;
 
 			switchState = B1111;
@@ -116,8 +123,10 @@ void loop() {
 			}
 		}
 	}  else if (mission == landing){
-		if( switchState & B1111 )
+		if( switchState & B1111 ){
 			mission = landed;
+			Serial.print("landed\n");
+		}
 
 		// Check servo[0] switch
 		if( switchState & B0001 ){
