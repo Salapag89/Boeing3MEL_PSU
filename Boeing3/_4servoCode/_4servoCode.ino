@@ -135,10 +135,10 @@ if (LANDED == 0 && switchState1 == HIGH && switchState2 == HIGH && switchState3 
   servo3.write(STOP);
   servo4.write(STOP);
 } else if(LANDED == 0 && switchState1 == LOW && switchState2 == HIGH && switchState3 == LOW && switchState4 == HIGH){
-  servo1.write(0);
-  servo2.write(90);
-  servo3.write(0);
-  servo4.write(90);
+  servo1.write(EXTEND);
+  servo2.write(STOP);
+  servo3.write(EXTEND);
+  servo4.write(STOP);
 } else if(LANDED == 0 && switchState1 == LOW && switchState2 == HIGH && switchState3 == HIGH && switchState4 == LOW){
   servo1.write(EXTEND);
   servo2.write(STOP);
@@ -155,10 +155,10 @@ if (LANDED == 0 && switchState1 == HIGH && switchState2 == HIGH && switchState3 
   servo3.write(STOP);
   servo4.write(EXTEND);
 } else if(LANDED == 0 && switchState1 == HIGH && switchState2 == HIGH && switchState3 == LOW && switchState4 == LOW){
-  servo1.write(90);
-  servo2.write(90);
-  servo3.write(0);
-  servo4.write(0);//3swtiches pressed
+  servo1.write(STOP);
+  servo2.write(STOP);
+  servo3.write(EXTEND);
+  servo4.write(EXTEND); // 3 swtiches pressed
 } else if(LANDED == 0 && switchState1 == LOW && switchState2 == HIGH && switchState3 == HIGH && switchState4 == HIGH){
   servo1.write(EXTEND);
   servo2.write(STOP);
