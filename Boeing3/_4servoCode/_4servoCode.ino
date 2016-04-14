@@ -30,8 +30,6 @@ void setup() {
 	//Wire.begin();
 	//Serial.begin(BAUD);
 
-	Serial.begin(9600);
-
 	// Init mission as flying
 	mission = landed;
 
@@ -63,19 +61,15 @@ void loop() {
 	*      1111 = Four Pressed
 	*  The actual value doesn't matter, just the total number of ones
 	*/
-	delay(500);
 	switchState = 0;
 	switchState |= digitalRead(3);	//servo[0]
 	switchState |= digitalRead(4) << 1;   //servo[1]
 	switchState |= digitalRead(5) << 2;	//servo[2]
 	switchState |= digitalRead(6) << 3;	//servo[3]
 	
-	Serial.print(switchState, BIN);
-	Serial.print('\n');
 
 	if( mission == flying){
 		if( switchState ){
-			Serial.print("landing\n");
 			mission = landing;
 
 			Time = millis();
@@ -86,10 +80,9 @@ void loop() {
 		}
 	} else if (mission == landed){
 		if( !switchState ){
-			Serial.print("flying\n");
 			mission = flying;
 
-			switchState = B1111;
+			switchState = B00001111;
 			Time = millis();
 			servo[0].write(UP);
 			servo[1].write(UP);
@@ -124,9 +117,9 @@ void loop() {
 			}
 		}
 	}  else if (mission == landing){
-		if( switchState & B1111 ){
+		if( switchState == 15 ){
 			mission = landed;
-			Serial.print("landed\n");
+			Serial.println( switchState, DEC );
 		}
 
 		// Check servo[0] switch
