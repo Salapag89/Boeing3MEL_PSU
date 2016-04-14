@@ -11,13 +11,11 @@
 
 //int BAUD = 9600;   //Bitrate for gyro, need to check the datasheet to find the correct rate
 
-enum status {
+enum mission {
   landing,
   landed,
   flying
-  };
-
-status mission;
+  }
 
 Servo servo[4];
 byte switchState;
@@ -110,51 +108,50 @@ void loop() {
 
 	if( !switchState )
 	  break;
-        }
-      }
-    }  else if (mission == landing){
-      if( switchState & B1111 )
-        mission = landed;
+     }
+  }  else if (mission == landing){
+    if( switchState & B1111 )
+      mission = landed;
 
-      // Check servo[0] switch
-      if( switchState & B0001 ){
-        servo[0].write(STOP);
+    // Check servo[0] switch
+    if( switchState & B0001 ){
+      servo[0].write(STOP);
 
-        if( !servoTime[0] )
-          servoTime[0] = 4*(millis() - Time);
+      if( !servoTime[0] )
+        servoTime[0] = 4*(millis() - Time);
     
-      } else
-        servo[0].write(DOWN);
+    } else
+      servo[0].write(DOWN);
     
-      // Check servo[1] switch
-      if( switchState & B0010 ){
-        servo[1].write(STOP);
+    // Check servo[1] switch
+    if( switchState & B0010 ){
+      servo[1].write(STOP);
 
-        if( !servoTime[1] )
-          servoTime[1] = 4*(millis() - Time);
+      if( !servoTime[1] )
+        servoTime[1] = 4*(millis() - Time);
     
-      } else
-        servo[1].write(DOWN);
+    } else
+      servo[1].write(DOWN);
 
-      // Check servo[2] switch
-      if( switchState & B0100 ){
-        servo[2].write(STOP);
+    // Check servo[2] switch
+    if( switchState & B0100 ){
+      servo[2].write(STOP);
 
-        if( !servoTime[2] )
-          servoTime[2] = 4*(millis() - Time);
+      if( !servoTime[2] )
+        servoTime[2] = 4*(millis() - Time);
     
-      } else
-        servo[2].write(DOWN);
+    } else
+      servo[2].write(DOWN);
 
-      // Check servo[3] switch
-      if( switchState & B1000 ){
-        servo[3].write(STOP);
+    // Check servo[3] switch
+    if( switchState & B1000 ){
+      servo[3].write(STOP);
 
-        if( !servoTime[3] )
-          servoTime[3] = 4*(millis() - Time);
+      if( !servoTime[3] )
+        servoTime[3] = 4*(millis() - Time);
     
-      } else
-        servo[3].write(DOWN);
-    }
+    } else
+      servo[3].write(DOWN);
   }
+
 }
