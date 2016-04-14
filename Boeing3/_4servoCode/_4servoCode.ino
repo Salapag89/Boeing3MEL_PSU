@@ -24,6 +24,7 @@ int EXTEND = 0;
 int STOP = 90;
 int RETRACT = 100;
 int RETRACT_TIME = 6000;
+int Lands = 0;
 
 // 0 rotates CW at full speed
 // 180 rotates CCW at full speed
@@ -46,7 +47,7 @@ void setup() {
  pinMode(5,INPUT);
  pinMode(6,INPUT);
  pinMode(13,OUTPUT); // For the LED which checks the modes
- Serial.print("Quadcopter is awaiting take-off\n");
+ Serial.print("Quadcopter is armed and awaiting take-off\n");
 }
 
 void loop() {
@@ -54,7 +55,7 @@ void loop() {
   LANDED = 0;
   TAKEN_OFF = 1; 
   Serial.print("Quadopter has taken off\n");
-  Serial.print("Quadcopter has not yet landed\n");
+  Serial.print("Quadcopter is in flight\n");
 }
 if (LANDED == 0) {
   digitalWrite(13,LOW);
@@ -76,7 +77,7 @@ if (LANDED == 1 && switchState1 == HIGH && switchState2 == HIGH && switchState3 
   servo3.write(STOP);
   servo4.write(STOP);
 } else if (LANDED == 1 && TAKEN_OFF == 1 && switchState1 == LOW && switchState2 == LOW && switchState3 == LOW && switchState4 == LOW) {
-  Serial.print("Quadcopter legs are retracting\n");
+  Serial.print("Quadcopter has taken off and retracting its legs\n");
   servo1.write(RETRACT);
   servo2.write(RETRACT);
   servo3.write(RETRACT);
@@ -84,7 +85,7 @@ if (LANDED == 1 && switchState1 == HIGH && switchState2 == HIGH && switchState3 
   delay(RETRACT_TIME);
   LANDED = 0;
   TAKEN_OFF = 0;
-  Serial.print("Quadcopter is waiting for the next land\n");
+  Serial.print("Quadcopter is in flight and prepared for next landing\n");
 }
 
 while(LANDED == 0 && switchState1 == LOW && switchState2 == LOW && switchState3 == LOW && switchState4 == LOW){
@@ -108,7 +109,9 @@ if (LANDED == 0 && switchState1 == HIGH && switchState2 == HIGH && switchState3 
   LANDED = 1;
   TAKEN_OFF = 1;
   previousTIME = currentTIME;
-  Serial.print("Quadcopter has landed\n");
+  Lands = Lands + 1;
+  Serial.print("Quadcopter has landed - Landing number: ");
+  Serial.println(Lands, DEC);
 } else if(LANDED == 0 && switchState1 == HIGH && switchState2 == LOW && switchState3 == LOW && switchState4 == LOW){
   servo1.write(STOP);
   servo2.write(EXTEND);
