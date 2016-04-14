@@ -1,7 +1,7 @@
 #include <Wire.h>
 #include <Servo.h>
 
-#define UP 110
+#define UP 100
 #define STOP 90
 #define DOWN 0
 
@@ -45,10 +45,10 @@ void setup() {
 	servoTime[3] = 0;
 
 	// Init the switches
-	pinMode(2,INPUT);
 	pinMode(3,INPUT);
 	pinMode(4,INPUT);
 	pinMode(5,INPUT);
+	pinMode(6,INPUT);
 }
 
 void loop() {
@@ -62,10 +62,10 @@ void loop() {
 	*  The actual value doesn't matter, just the total number of ones
 	*/
 	switchState = B0000;
-	switchState |= digitalRead(2);	//servo[0]
-	switchState |= digitalRead(3) << 1;   //servo[1]
-	switchState |= digitalRead(4) << 2;	//servo[2]
-	switchState |= digitalRead(5) << 3;	//servo[3]
+	switchState |= digitalRead(3);	//servo[0]
+	switchState |= digitalRead(4) << 1;   //servo[1]
+	switchState |= digitalRead(5) << 2;	//servo[2]
+	switchState |= digitalRead(6) << 3;	//servo[3]
 	
 	if( mission == flying){
 		if( switchState ){
