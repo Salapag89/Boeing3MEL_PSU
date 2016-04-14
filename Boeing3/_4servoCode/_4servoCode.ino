@@ -1,4 +1,4 @@
-#include <Wire.h>
+#include <Write.h>
 #include <Servo.h>
 
 // Address for the GYRO, uncomment the one you want, comment the one you don't
@@ -18,6 +18,7 @@ int switchState4 = 0;
 int OFF = 0;
 unsigned long TIME = 0;
 long ELAPSED = 3000;
+int LANDED = 0;
 
 void setup() {
 
@@ -45,13 +46,32 @@ void loop() {
     switchState3 = digitalRead(4);
     switchState4 = digitalRead(5);
   } else if(OFF == 1){
-    switchState1 = 1;
-    switchState2 = 1;
-    switchState3 = 1;
-    switchState4 = 1;
+    switchState1 = HIGH;
+    switchState2 = HIGH;
+    switchState3 = HIGH;
+    switchState4 = HIGH;
+    LANDED = 1;
   }
+  
+  if (LANDED == 1) {
+  switchState1 = digitalRead(2);
+  switchState2 = digitalRead(3);
+  switchState3 = digitalRead(4);
+  switchState4 = digitalRead(5);
+}
+if (LANDED == 1 && switchState1 == HIGH && switchState2 == HIGH && switchState3 == HIGH && switchState4 == HIGH) {
+  servo1.write(90);
+  servo2.write(90);
+  servo3.write(90);
+  servo4.write(87);
+} else if (LANDED == 1 && switchState1 == LOW && switchState2 == LOW && switchState3 == LOW && switchState4 == LOW) {
+  servo1.write(100);
+  servo2.write(100);
+  servo3.write(100);
+  servo4.write(100);
+}
 
-  while(switchState1 == LOW && switchState2 == LOW && switchState3 == LOW && switchState4 == LOW){
+  while(LANDED == 0 && switchState1 == LOW && switchState2 == LOW && switchState3 == LOW && switchState4 == LOW){
     switchState1 = digitalRead(2);
     switchState2 = digitalRead(3);
     switchState3 = digitalRead(4);
@@ -63,7 +83,7 @@ void loop() {
   }
 
   //all switches pressed
-  if (switchState1 == HIGH && switchState2 == HIGH && switchState3 == HIGH && switchState4 == HIGH){
+  if (LANDED == 0 && switchState1 == HIGH && switchState2 == HIGH && switchState3 == HIGH && switchState4 == HIGH){
     servo1.write(90);
     servo2.write(90);
     servo3.write(90);
@@ -71,73 +91,73 @@ void loop() {
     TIME = millis();
   }if (TIME > ELAPSED){
     OFF = 1;
-  } else if(switchState1 == HIGH && switchState2 == LOW && switchState3 == LOW && switchState4 == LOW){
+  } else if(LANDED == 0 && switchState1 == HIGH && switchState2 == LOW && switchState3 == LOW && switchState4 == LOW){
     servo1.write(90);
     servo2.write(0);
     servo3.write(0);
     servo4.write(0);
-  } else if(switchState1 == LOW && switchState2 == HIGH && switchState3 == LOW && switchState4 == LOW){
+  } else if(LANDED == 0 && switchState1 == LOW && switchState2 == HIGH && switchState3 == LOW && switchState4 == LOW){
     servo1.write(0);
     servo2.write(90);
     servo3.write(0);
     servo4.write(0); 
-  } else if(switchState1 == LOW && switchState2 == LOW && switchState3 == HIGH && switchState4 == LOW){
+  } else if(LANDED == 0 && switchState1 == LOW && switchState2 == LOW && switchState3 == HIGH && switchState4 == LOW){
     servo1.write(0);
     servo2.write(0);
     servo3.write(90);
     servo4.write(0);
-  } else if(switchState1 == LOW && switchState2 == LOW && switchState3 == LOW && switchState4 == HIGH){
+  } else if(LANDED == 0 && switchState1 == LOW && switchState2 == LOW && switchState3 == LOW && switchState4 == HIGH){
     servo1.write(0);
     servo2.write(0);
     servo3.write(0);
     servo4.write(90); 
   //two switches are pressed from here
-  } else if(switchState1 == LOW && switchState2 == LOW && switchState3 == HIGH && switchState4 == HIGH){
+  } else if(LANDED == 0 && switchState1 == LOW && switchState2 == LOW && switchState3 == HIGH && switchState4 == HIGH){
     servo1.write(0);
     servo2.write(0);
     servo3.write(90);
     servo4.write(90);
-  } else if(switchState1 == LOW && switchState2 == HIGH && switchState3 == LOW && switchState4 == HIGH){
+  } else if(LANDED == 0 && switchState1 == LOW && switchState2 == HIGH && switchState3 == LOW && switchState4 == HIGH){
     servo1.write(0);
     servo2.write(90);
     servo3.write(0);
     servo4.write(90);
-  } else if(switchState1 == LOW && switchState2 == HIGH && switchState3 == HIGH && switchState4 == LOW){
+  } else if(LANDED == 0 && switchState1 == LOW && switchState2 == HIGH && switchState3 == HIGH && switchState4 == LOW){
     servo1.write(0);
     servo2.write(90);
     servo3.write(90);
     servo4.write(0);
-  } else if(switchState1 == HIGH && switchState2 == LOW && switchState3 == LOW && switchState4 == HIGH){
+  } else if(LANDED == 0 && switchState1 == HIGH && switchState2 == LOW && switchState3 == LOW && switchState4 == HIGH){
     servo1.write(90);
     servo2.write(0);
     servo3.write(0);
     servo4.write(90);
-  } else if(switchState1 == HIGH && switchState2 == LOW && switchState3 == HIGH && switchState4 == LOW){
+  } else if(LANDED == 0 && witchState1 == HIGH && switchState2 == LOW && switchState3 == HIGH && switchState4 == LOW){
     servo1.write(90);
     servo2.write(0);
     servo3.write(90);
     servo4.write(0);
-  } else if(switchState1 == HIGH && switchState2 == HIGH && switchState3 == LOW && switchState4 == LOW){
+  } else if(LANDED == 0 && switchState1 == HIGH && switchState2 == HIGH && switchState3 == LOW && switchState4 == LOW){
     servo1.write(90);
     servo2.write(90);
     servo3.write(0);
     servo4.write(0);//3swtiches pressed
-  } else if(switchState1 == LOW && switchState2 == HIGH && switchState3 == HIGH && switchState4 == HIGH){
+  } else if(LANDED == 0 && switchState1 == LOW && switchState2 == HIGH && switchState3 == HIGH && switchState4 == HIGH){
     servo1.write(0);
     servo2.write(90);
     servo3.write(90);
     servo4.write(90);
-  } else if(switchState1 == HIGH && switchState2 == LOW && switchState3 == HIGH && switchState4 == HIGH){
+  } else if(LANDED == 0 && switchState1 == HIGH && switchState2 == LOW && switchState3 == HIGH && switchState4 == HIGH){
     servo1.write(90);
     servo2.write(0);
     servo3.write(90);
     servo4.write(90);
-  } else if(switchState1 == HIGH && switchState2 == HIGH && switchState3 == LOW && switchState4 == HIGH){
+  } else if(LANDED == 0 && switchState1 == HIGH && switchState2 == HIGH && switchState3 == LOW && switchState4 == HIGH){
     servo1.write(90);
     servo2.write(90);
     servo3.write(0);
     servo4.write(90);
-  } else if(switchState1 == HIGH && switchState2 == HIGH && switchState3 == HIGH && switchState4 == LOW){
+  } else if(LANDED == 0 && switchState1 == HIGH && switchState2 == HIGH && switchState3 == HIGH && switchState4 == LOW){
     servo1.write(90);
     servo2.write(90);
     servo3.write(90);
