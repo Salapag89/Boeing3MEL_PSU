@@ -45,7 +45,7 @@ void setup() {
  pinMode(4,INPUT);
  pinMode(5,INPUT);
  pinMode(6,INPUT);
- pinMode(13,OUTPUT); // LED
+ pinMode(13,OUTPUT); // For the LED which checks the modes
  Serial.print("Quadcopter is awaiting take-off\n");
 }
 
