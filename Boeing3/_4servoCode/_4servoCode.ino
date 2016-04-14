@@ -63,7 +63,8 @@ void loop() {
 	*      1111 = Four Pressed
 	*  The actual value doesn't matter, just the total number of ones
 	*/
-	switchState = B0000;
+	delay(500);
+	switchState = 0;
 	switchState |= digitalRead(3);	//servo[0]
 	switchState |= digitalRead(4) << 1;   //servo[1]
 	switchState |= digitalRead(5) << 2;	//servo[2]
@@ -84,7 +85,7 @@ void loop() {
 			servoTime[3] = 0;
 		}
 	} else if (mission == landed){
-		if( ~switchState ){
+		if( !switchState ){
 			Serial.print("flying\n");
 			mission = flying;
 
