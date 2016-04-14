@@ -31,7 +31,7 @@ void setup() {
 	//Serial.begin(BAUD);
 
 	// Init mission as flying
-	mission = flying;
+	mission = landed;
 
 	// Init the servos
 	servo[0].attach(8);
