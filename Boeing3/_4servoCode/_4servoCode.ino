@@ -11,11 +11,13 @@
 
 //int BAUD = 9600;   //Bitrate for gyro, need to check the datasheet to find the correct rate
 
-enum mission {
+enum status {
   landing,
   landed,
   flying
   }
+
+status mission;
 
 Servo servo[4];
 byte switchState;
