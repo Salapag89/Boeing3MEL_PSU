@@ -1,7 +1,7 @@
 #include <Wire.h>
 #include <Servo.h>
 
-#define UP 110
+#define UP 100
 #define STOP 90
 #define DOWN 0
 
@@ -43,10 +43,10 @@ void setup() {
  servoTime[3] = 0;
 
  // Init the switches
- pinMode(2,INPUT);
  pinMode(3,INPUT);
  pinMode(4,INPUT);
  pinMode(5,INPUT);
+ pinMode(6,INPUT);
 }
 
 void loop() {
