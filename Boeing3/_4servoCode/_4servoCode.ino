@@ -4,6 +4,7 @@
 #define UP 100
 #define STOP 90
 #define DOWN 0
+#define MAXTIME 
 
 // Address for the GYRO, uncomment the one you want, comment the one you don't
 //byte GYRO = B110100;    //PSU
