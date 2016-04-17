@@ -4,13 +4,13 @@
 #define UP 100
 #define STOP 90
 #define DOWN 0
-#define MAXTIME 
+#define MAXTIME 3000
+#define BAUD 9600
 
 // Address for the GYRO, uncomment the one you want, comment the one you don't
 //byte GYRO = B110100;    //PSU
 //byte GYRO = B110100;    //MEL
 
-//int BAUD = 9600;   //Bitrate for gyro, need to check the datasheet to find the correct rate
 
 enum status {
   landing,
@@ -29,7 +29,7 @@ void setup() {
 
 	// Init i2c
 	//Wire.begin();
-	//Serial.begin(BAUD);
+	Serial.begin(BAUD);
 
 	// Init mission as flying
 	mission = landed;
@@ -62,12 +62,13 @@ void loop() {
 	*      1111 = Four Pressed
 	*  The actual value doesn't matter, just the total number of ones
 	*/
+	wait(100);
 	switchState = 0;
 	switchState |= digitalRead(3);	//servo[0]
 	switchState |= digitalRead(4) << 1;   //servo[1]
 	switchState |= digitalRead(5) << 2;	//servo[2]
 	switchState |= digitalRead(6) << 3;	//servo[3]
-	
+	Serial.println(switchState, BIN);
 
 	if( mission == flying){
 		if( switchState ){
@@ -118,7 +119,9 @@ void loop() {
 			}
 		}
 	}  else if (mission == landing){
-		if( switchState == 15 ){
+		runTime = millis();
+
+		if( switchState == 15 ||  (runTime - Time) >= MAXTIME ){
 			mission = landed;
 			Serial.println( switchState, DEC );
 		}
