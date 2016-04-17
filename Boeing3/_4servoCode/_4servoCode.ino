@@ -29,7 +29,7 @@ void setup() {
 
 	// Init i2c
 	//Wire.begin();
-	Serial.begin(BAUD);
+	//Serial.begin(BAUD);
 
 	// Init mission as flying
 	mission = landed;
@@ -50,6 +50,11 @@ void setup() {
 	pinMode(4,INPUT);
 	pinMode(5,INPUT);
 	pinMode(6,INPUT);
+	
+	digitalWrite(3, HIGH);
+	digitalWrite(4, HIGH);
+	digitalWrite(5, HIGH);
+	digitalWrite(6, HIGH);
 }
 
 void loop() {
@@ -62,17 +67,20 @@ void loop() {
 	*      1111 = Four Pressed
 	*  The actual value doesn't matter, just the total number of ones
 	*/
-	wait(100);
+
+	//delay(100);
+
 	switchState = 0;
 	switchState |= digitalRead(3);	//servo[0]
 	switchState |= digitalRead(4) << 1;   //servo[1]
 	switchState |= digitalRead(5) << 2;	//servo[2]
 	switchState |= digitalRead(6) << 3;	//servo[3]
-	Serial.println(switchState, BIN);
+	//Serial.println(switchState, BIN);
 
 	if( mission == flying){
-		if( switchState ){
+		if( switchState != B1111 ){
 			mission = landing;
+			//Serial.println("Landing");
 
 			Time = millis();
 			servoTime[0] = 0;
@@ -81,10 +89,11 @@ void loop() {
 			servoTime[3] = 0;
 		}
 	} else if (mission == landed){
-		if( !switchState ){
+		if( switchState == B1111 ){
 			mission = flying;
+			//Serial.println("Flying");
 
-			switchState = B00001111;
+			switchState = B11110000;
 			Time = millis();
 			servo[0].write(UP);
 			servo[1].write(UP);
@@ -121,13 +130,13 @@ void loop() {
 	}  else if (mission == landing){
 		runTime = millis();
 
-		if( switchState == 15 ||  (runTime - Time) >= MAXTIME ){
+		if( switchState == B0000 ||  (runTime - Time) >= MAXTIME ){
 			mission = landed;
-			Serial.println( switchState, DEC );
+			//Serial.println( "Landed" );
 		}
 
 		// Check servo[0] switch
-		if( switchState & B0001 ){
+		if( switchState & B1110 ){
 			servo[0].write(STOP);
 
 			if( !servoTime[0] )
@@ -137,7 +146,7 @@ void loop() {
 			servo[0].write(DOWN);
     
 		// Check servo[1] switch
-		if( switchState & B0010 ){
+		if( switchState & B1101 ){
 			servo[1].write(STOP);
 
 			if( !servoTime[1] )
@@ -147,7 +156,7 @@ void loop() {
 			servo[1].write(DOWN);
 
 		// Check servo[2] switch
-		if( switchState & B0100 ){
+		if( switchState & B1011 ){
 			servo[2].write(STOP);
 
 			if( !servoTime[2] )
@@ -157,7 +166,7 @@ void loop() {
 			servo[2].write(DOWN);
 
 		// Check servo[3] switch
-		if( switchState & B1000 ){
+		if( switchState & B0111 ){
 			servo[3].write(STOP);
 
 			if( !servoTime[3] )
