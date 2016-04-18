@@ -75,7 +75,7 @@ void loop() {
 	switchState |= digitalRead(4) << 1;   //servo[1]
 	switchState |= digitalRead(5) << 2;	//servo[2]
 	switchState |= digitalRead(6) << 3;	//servo[3]
-	//Serial.println(switchState, BIN);
+	Serial.println(switchState, BIN);
 
 	if( mission == flying){
 		if( switchState != B1111 ){
@@ -83,10 +83,17 @@ void loop() {
 			//Serial.println("Landing");
 
 			Time = millis();
+			runTime = millis();
+
 			servoTime[0] = 0;
 			servoTime[1] = 0;
 			servoTime[2] = 0;
 			servoTime[3] = 0;
+
+			servo[0].write(DOWN);
+			servo[1].write(DOWN);
+			servo[2].write(DOWN);
+			servo[3].write(DOWN);
 		}
 	} else if (mission == landed){
 		if( switchState == B1111 ){
@@ -142,8 +149,7 @@ void loop() {
 			if( !servoTime[0] )
 				servoTime[0] = 4*(millis() - Time);
     
-		} else
-			servo[0].write(DOWN);
+		}
     
 		// Check servo[1] switch
 		if( switchState & B1101 ){
@@ -152,8 +158,7 @@ void loop() {
 			if( !servoTime[1] )
 				servoTime[1] = 4*(millis() - Time);
     
-		} else
-			servo[1].write(DOWN);
+		}
 
 		// Check servo[2] switch
 		if( switchState & B1011 ){
@@ -162,8 +167,7 @@ void loop() {
 			if( !servoTime[2] )
 				servoTime[2] = 4*(millis() - Time);
     
-		} else
-			servo[2].write(DOWN);
+		}
 
 		// Check servo[3] switch
 		if( switchState & B0111 ){
@@ -172,8 +176,7 @@ void loop() {
 			if( !servoTime[3] )
 				servoTime[3] = 4*(millis() - Time);
     
-		} else
-		servo[3].write(DOWN);
+		} 
 	}
 
 }
