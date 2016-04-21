@@ -3,9 +3,12 @@
 
 #define UP 100
 #define STOP 90
-#define DOWN 0
+#define DOWN 87
 #define MAXTIME 3000
 #define BAUD 9600
+#define DEFX -500
+#define DEFY -40
+#define DEFZ 15700
 
 // Address for the GYRO, uncomment the one you want, comment the one you don't
 //byte GYRO = B110100;    //PSU
@@ -29,7 +32,7 @@ void setup() {
 
 	// Init i2c
 	//Wire.begin();
-	//Serial.begin(BAUD);
+	Serial.begin(BAUD);
 
 	// Init mission as flying
 	mission = landed;
@@ -68,7 +71,7 @@ void loop() {
 	*  The actual value doesn't matter, just the total number of ones
 	*/
 
-	//delay(100);
+	delay(100);
 
 	switchState = 0;
 	switchState |= digitalRead(3);	//servo[0]
@@ -76,11 +79,12 @@ void loop() {
 	switchState |= digitalRead(5) << 2;	//servo[2]
 	switchState |= digitalRead(6) << 3;	//servo[3]
 	Serial.println(switchState, BIN);
+        Serial.println(switchState & B1, BIN);
 
 	if( mission == flying){
 		if( switchState != B1111 ){
 			mission = landing;
-			//Serial.println("Landing");
+			Serial.println("Landing");
 
 			Time = millis();
 			runTime = millis();
@@ -98,7 +102,7 @@ void loop() {
 	} else if (mission == landed){
 		if( switchState == B1111 ){
 			mission = flying;
-			//Serial.println("Flying");
+			Serial.println("Flying");
 
 			switchState = B11110000;
 			Time = millis();
@@ -139,40 +143,44 @@ void loop() {
 
 		if( switchState == B0000 ||  (runTime - Time) >= MAXTIME ){
 			mission = landed;
-			//Serial.println( "Landed" );
+			Serial.println( "Landed" );
 		}
 
 		// Check servo[0] switch
-		if( switchState & B1110 ){
+		if( !( switchState & B1 ) ){
 			servo[0].write(STOP);
-
+                        
+                        Serial.println("Stop 0");
 			if( !servoTime[0] )
 				servoTime[0] = 4*(millis() - Time);
     
 		}
     
 		// Check servo[1] switch
-		if( switchState & B1101 ){
+		if( !( switchState >> 1 & B1 ) ){
 			servo[1].write(STOP);
 
+                        Serial.println("Stop 1");
 			if( !servoTime[1] )
 				servoTime[1] = 4*(millis() - Time);
     
 		}
 
 		// Check servo[2] switch
-		if( switchState & B1011 ){
+		if( !( switchState >> 2 & B1 ) ){
 			servo[2].write(STOP);
 
+                        Serial.println("Stop 2");
 			if( !servoTime[2] )
 				servoTime[2] = 4*(millis() - Time);
     
 		}
 
 		// Check servo[3] switch
-		if( switchState & B0111 ){
+		if( !(switchState >> 3 & B1) ){
 			servo[3].write(STOP);
 
+                        Serial.println("Stop 3");
 			if( !servoTime[3] )
 				servoTime[3] = 4*(millis() - Time);
     
