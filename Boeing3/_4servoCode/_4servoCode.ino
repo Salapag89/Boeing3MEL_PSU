@@ -6,8 +6,8 @@
 #define DOWN 87
 #define MAXTIME 3000
 #define BAUD 9600
-#define DEFX -630
-#define DEFY 60
+#define DEFX 500
+#define DEFY 190
 #define DEFZ 15700
 
 // Address for the GYRO, uncomment the one you want, comment the one you don't
