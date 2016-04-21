@@ -6,13 +6,11 @@
 #define DOWN 87
 #define MAXTIME 3000
 #define BAUD 9600
-#define DEFX 500
-#define DEFY 190
+#define DEFX -800
+#define DEFY -80
 #define DEFZ 15700
+#define TOL 800
 
-// Address for the GYRO, uncomment the one you want, comment the one you don't
-//byte GYRO = B110100;    //PSU
-//byte GYRO = B110100;    //MEL
 
 
 enum status {
