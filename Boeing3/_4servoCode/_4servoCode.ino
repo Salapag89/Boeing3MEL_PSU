@@ -238,39 +238,124 @@ void adjust() {
 
   yVal = (temp1 << 8) | (temp2 & 0xff);
 
+  unsigned long servoStartTime[4];
+  bool servoUpDown[4];
+
   while(abs(abs(xVal)-abs(DEFX)) > TOL || abs(abs(yVal)-abs(DEFY)) > TOL) { 
     if(abs(abs(xVal)-abs(DEFX)) > TOL) { 
       if(xVal < DEFX) { 
-        servo[0].write(UP);
-        servo[2].write(DOWN);
+        if(servoTime[0] < MAXTIME) {
+          servo[0].write(UP);
+          servoStartTime[0] = millis();
+          servoUpDown[0] = 1;
+        }
+        if(servoTime[2] > 0){
+          servo[2].write(DOWN);
+          servoStartTime[2] = millis();
+          servoUpDown[2] = 0;
+        }
       } else if (xVal > DEFX) {
-        servo[0].write(DOWN);
-        servo[2].write(UP);
+        if(servoTime[0] > 0) {
+          servo[0].write(DOWN);
+          servoStartTime[0] = millis();
+          servoUpDown[0] = 0;
+        }
+        if(servoTime[2] < MAXTIME){
+          servo[2].write(UP);
+          servoStartTime[2] = millis();
+          servoUpDown[2] = 1;
+        }
       }
     } else {
       servo[0].write(STOP);
+      if(servoUpDown[0] == 1){
+        servoTime[0]+=millis()-servoStartTime[0];
+      } else {
+        servoTime[0]-=millis()-servoStartTime[0];
+      }
+      
       servo[2].write(STOP); 
+      if(servoUpDown[2] == 1){
+        servoTime[2]+=millis()-servoStartTime[2];
+      } else {
+        servoTime[2]-=millis()-servoStartTime[2];
+      }
     }
     
     if (abs(abs(yVal)-abs(DEFY)) > TOL) {
       if(yVal < DEFY) { 
-        servo[1].write(UP);
-        servo[3].write(DOWN);
+        if(servoTime[1] < MAXTIME) {
+          servo[1].write(UP);
+          servoStartTime[1] = millis();
+          servoUpDown[1] = 1;
+        }
+        if(servoTime[3] > 0){
+          servo[3].write(DOWN);
+          servoStartTime[3] = millis();
+          servoUpDown[3] = 0;
+        }
       } else if (yVal > DEFY) {
-        servo[1].write(DOWN);
-        servo[3].write(UP);
+        if(servoTime[1] > 0) {
+          servo[1].write(DOWN);
+          servoStartTime[1] = millis();
+          servoUpDown[1] = 0;
+        }
+        if(servoTime[3] < MAXTIME){
+          servo[3].write(UP);
+          servoStartTime[3] = millis();
+          servoUpDown[3] = 1;
+        }
       }
     } else {
       servo[1].write(STOP);
+      if(servoUpDown[1] == 1){
+        servoTime[1]+=millis()-servoStartTime[1];
+      } else {
+        servoTime[1]-=millis()-servoStartTime[1];
+      }
+      
       servo[3].write(STOP);
+      if(servoUpDown[3] == 1){
+        servoTime[3]+=millis()-servoStartTime[3];
+      } else {
+        servoTime[3]-=millis()-servoStartTime[3];
+      }
     }
-
-    xVal; // Get the gyro X values again
-    yVal; // Get the gyro Y values again
+    
+    temp1 = read(X_H);
+    temp2 = read(X_L);
+    xVal = (temp1 << 8) | (temp2 & 0xff);
+  
+    temp1 = read(Y_H);
+    temp2 = read(Y_L);
+    yVal = (temp1 << 8) | (temp2 & 0xff);
   }
   servo[0].write(STOP);
+  if(servoUpDown[0] == 1){
+    servoTime[0]+=millis()-servoStartTime[0];
+  } else {
+    servoTime[0]-=millis()-servoStartTime[0];
+  }
+  
   servo[1].write(STOP);
+  if(servoUpDown[1] == 1){
+    servoTime[1]+=millis()-servoStartTime[1];
+  } else {
+    servoTime[1]-=millis()-servoStartTime[1];
+  }
+  
   servo[2].write(STOP);
+  if(servoUpDown[2] == 1){
+    servoTime[2]+=millis()-servoStartTime[2];
+  } else {
+    servoTime[2]-=millis()-servoStartTime[2];
+  }
+  
   servo[3].write(STOP);
+  if(servoUpDown[3] == 1){
+    servoTime[3]+=millis()-servoStartTime[3];
+  } else {
+    servoTime[3]-=millis()-servoStartTime[3];
+  }
 }
 
