@@ -10,12 +10,10 @@
 #define DEFY -80
 #define DEFZ 15700
 #define TOL 800
-#define XH 0x3B
-#define XL 0x3C
-#define YH 0x3D
-#define YL 0x3E
-#define ZH 0x3F
-#define ZL 0x40
+#define X_H 0x3B
+#define X_L 0x3C
+#define Y_H 0x3D
+#define Y_L 0x3E
 
 
 enum status {
@@ -226,6 +224,19 @@ void loop() {
 void adjust() {
   int xVal; // Read the gyro value for the X value here
   int yVal; // Read the gyro value for the Y value here
+  
+  int temp1, temp2;
+
+  temp1 = read(X_H);
+  temp2 = read(X_L);
+
+  xVal = (temp1 << 8) | (temp2 & 0xff);
+
+  temp1 = read(Y_H);
+  temp2 = read(Y_L);
+
+  yVal = (temp1 << 8) | (temp2 & 0xff);
+
   while(abs(abs(xVal)-abs(DEFX)) > TOL || abs(abs(yVal)-abs(DEFY)) > TOL) { 
     if(abs(abs(xVal)-abs(DEFX)) > TOL) { 
       if(xVal < DEFX) { 
