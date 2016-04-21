@@ -31,7 +31,6 @@ status mission = flying;
 //    -servo[1] should be positive, servo[3] should be negative
 Servo servo[4];
 byte switchState;
-unsigned long Time, runTime;
 unsigned long servoTime[4];
 
 byte read(int reg)
@@ -98,8 +97,10 @@ void loop() {
 	*      1111 = Four Pressed
 	*  The actual value doesn't matter, just the total number of ones
 	*/
-
-	delay(100);
+      
+        //delay(100);
+        
+        unsigned long Time, runTime;
 
 	switchState = 0;
 	switchState |= digitalRead(3);	//servo[0]
