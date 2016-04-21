@@ -166,7 +166,8 @@ void loop() {
 				if( ~switchState )
 					break;
 			}
-		}
+		}else
+		   adjust();
 	}  else if (mission == landing){
 		runTime = millis();
 
