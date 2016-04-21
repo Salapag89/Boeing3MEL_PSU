@@ -246,7 +246,12 @@ void adjust() {
         servo[0].write(DOWN);
         servo[2].write(UP);
       }
-    } else if (abs(abs(yVal)-abs(DEFY)) > TOL) {
+    } else {
+      servo[0].write(STOP);
+      servo[2].write(STOP); 
+    }
+    
+    if (abs(abs(yVal)-abs(DEFY)) > TOL) {
       if(yVal < DEFY) { 
         servo[1].write(UP);
         servo[3].write(DOWN);
@@ -254,10 +259,17 @@ void adjust() {
         servo[1].write(DOWN);
         servo[3].write(UP);
       }
+    } else {
+      servo[1].write(STOP);
+      servo[3].write(STOP);
     }
 
     xVal; // Get the gyro X values again
     yVal; // Get the gyro Y values again
   }
+  servo[0].write(STOP);
+  servo[1].write(STOP);
+  servo[2].write(STOP);
+  servo[3].write(STOP);
 }
 
