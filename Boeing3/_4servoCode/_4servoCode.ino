@@ -1,4 +1,4 @@
-#include <Wire.h>
+ #include <Wire.h>
 #include <Servo.h>
 
 #define UP 100
@@ -26,6 +26,11 @@ enum status {
 
 status mission = flying;  
 
+// MAKE SURE THAT:
+//  -servo[0] and servo[2] are opposites on the X-axis
+//    -servo[0] should be positive, servo[2] should be negative
+//  -servo[1] and servo[3] are opposites on the Y-axis
+//    -servo[1] should be positive, servo[3] should be negative
 Servo servo[4];
 byte switchState;
 unsigned long Time, runTime;
@@ -177,7 +182,7 @@ void loop() {
                         
                         Serial.println("Stop 0");
 			if( !servoTime[0] )
-				servoTime[0] = 4*(millis() - Time);
+				servoTime[0] = (millis() - Time);
     
 		}
     
@@ -187,7 +192,7 @@ void loop() {
 
                         Serial.println("Stop 1");
 			if( !servoTime[1] )
-				servoTime[1] = 4*(millis() - Time);
+				servoTime[1] = (millis() - Time);
     
 		}
 
@@ -197,7 +202,7 @@ void loop() {
 
                         Serial.println("Stop 2");
 			if( !servoTime[2] )
-				servoTime[2] = 4*(millis() - Time);
+				servoTime[2] = (millis() - Time);
     
 		}
 
@@ -207,9 +212,41 @@ void loop() {
 
                         Serial.println("Stop 3");
 			if( !servoTime[3] )
-				servoTime[3] = 4*(millis() - Time);
+				servoTime[3] = (millis() - Time);
     
 		} 
 	}
-
 }
+
+// MAKE SURE THAT:
+//  -servo[0] and servo[2] are opposites on the X-axis
+//    -servo[0] should be positive, servo[2] should be negative
+//  -servo[1] and servo[3] are opposites on the Y-axis
+//    -servo[1] should be positive, servo[3] should be negative
+void adjust() {
+  int xVal; // Read the gyro value for the X value here
+  int yVal; // Read the gyro value for the Y value here
+  while(abs(abs(xVal)-abs(DEFX)) > TOL || abs(abs(yVal)-abs(DEFY)) > TOL) { 
+    if(abs(abs(xVal)-abs(DEFX)) > TOL) { 
+      if(xVal < DEFX) { 
+        servo[0].write(UP);
+        servo[2].write(DOWN);
+      } else if (xVal > DEFX) {
+        servo[0].write(DOWN);
+        servo[2].write(UP);
+      }
+    } else if (abs(abs(yVal)-abs(DEFY)) > TOL) {
+      if(yVal < DEFY) { 
+        servo[1].write(UP);
+        servo[3].write(DOWN);
+      } else if (yVal > DEFY) {
+        servo[1].write(DOWN);
+        servo[3].write(UP);
+      }
+    }
+
+    xVal; // Get the gyro X values again
+    yVal; // Get the gyro Y values again
+  }
+}
+
