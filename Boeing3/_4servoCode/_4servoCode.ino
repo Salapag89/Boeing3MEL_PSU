@@ -10,7 +10,12 @@
 #define DEFY -80
 #define DEFZ 15700
 #define TOL 800
-
+#define XH 0x3B
+#define XL 0x3C
+#define YH 0x3D
+#define YL 0x3E
+#define ZH 0x3F
+#define ZL 0x40
 
 
 enum status {
@@ -26,10 +31,32 @@ byte switchState;
 unsigned long Time, runTime;
 unsigned long servoTime[4];
 
+byte read(int reg)
+{
+    Wire.beginTransmission(0x68); // starting the transmission to sensor address 0x68
+    Wire.write(reg);
+    Wire.endTransmission(false);
+    Wire.requestFrom(0x68, 1, false); // requestone byte of data
+    byte val = Wire.read();
+    Wire.endTransmission(true);
+    return val;
+}
+
+void write(int reg, int data)
+{
+    Wire.beginTransmission(0x68); // starting the transmission to sensor address 0x68
+    Wire.write(reg);
+    Wire.write(data);
+    Wire.endTransmission(true);
+}
+
 void setup() {
 
 	// Init i2c
-	//Wire.begin();
+	Wire.begin();
+	write(0x6B, 0);
+
+	// Init serial to write to terminal
 	Serial.begin(BAUD);
 
 	// Init mission as flying
