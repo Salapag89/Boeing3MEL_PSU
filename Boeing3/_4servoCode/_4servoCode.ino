@@ -102,11 +102,13 @@ void loop() {
         
         unsigned long Time, runTime;
 
-	switchState = 0;
-	switchState |= digitalRead(3);	//servo[0]
-	switchState |= digitalRead(4) << 1;   //servo[1]
-	switchState |= digitalRead(5) << 2;	//servo[2]
-	switchState |= digitalRead(6) << 3;	//servo[3]
+	
+  // Pin 3 == servo[0]
+  // Pin 4 == servo[1]
+  // Pin 5 == servo[2]
+  // Pin 6 == servo[3]
+  GetSwitchState();
+  
 	Serial.println(switchState, BIN);
         Serial.println(switchState & B1, BIN);
 
@@ -238,7 +240,11 @@ void adjust() {
   unsigned long servoStartTime[4];
   bool servoUpDown[4];
 
-  while(abs(abs(xVal)-abs(DEFX)) > TOL || abs(abs(yVal)-abs(DEFY)) > TOL) { 
+  GetSwitchState();
+
+  // I think this should continue until switchState == B0000 (i.e. none of the switches are pressed) and then as soon as it exits, 
+  // all of the legs should retract completely, as it should be flying at that point. Call loop(). Sound right?
+  while(switchState != B0000 /*abs(abs(xVal)-abs(DEFX)) > TOL || abs(abs(yVal)-abs(DEFY)) > TOL*/) { 
     if(abs(abs(xVal)-abs(DEFX)) > TOL) { 
       if(xVal < DEFX) { 
         if(servoTime[0] < MAXTIME) {
@@ -305,7 +311,7 @@ void adjust() {
     temp2 = read(Y_L);
     yVal = (temp1 << 8) | (temp2 & 0xff);
   }
-  
+
   for(int i=0;i<4;i++){
     StopServo(i,servoStartTime[i],servoUpDown[i]);
   }
@@ -319,5 +325,13 @@ unsigned long StopServo(int servoNum, unsigned long servoStartTime, bool servoUp
   } else {
     servoTime[servoNum]-=millis()-servoStartTime;
   }
+}
+
+void GetSwitchState(){
+  switchState = 0;
+  switchState |= digitalRead(3);  //servo[0]
+  switchState |= digitalRead(4) << 1; //servo[1]
+  switchState |= digitalRead(5) << 2; //servo[2]
+  switchState |= digitalRead(6) << 3; //servo[3]
 }
 
