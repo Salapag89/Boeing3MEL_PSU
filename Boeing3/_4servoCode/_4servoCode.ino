@@ -227,15 +227,12 @@ void adjust() {
   int yVal; // Read the gyro value for the Y value here
   
   int temp1, temp2;
-
   temp1 = read(X_H);
   temp2 = read(X_L);
-
   xVal = (temp1 << 8) | (temp2 & 0xff);
-
+  
   temp1 = read(Y_H);
   temp2 = read(Y_L);
-
   yVal = (temp1 << 8) | (temp2 & 0xff);
 
   unsigned long servoStartTime[4];
@@ -267,19 +264,8 @@ void adjust() {
         }
       }
     } else {
-      servo[0].write(STOP);
-      if(servoUpDown[0] == 1){
-        servoTime[0]+=millis()-servoStartTime[0];
-      } else {
-        servoTime[0]-=millis()-servoStartTime[0];
-      }
-      
-      servo[2].write(STOP); 
-      if(servoUpDown[2] == 1){
-        servoTime[2]+=millis()-servoStartTime[2];
-      } else {
-        servoTime[2]-=millis()-servoStartTime[2];
-      }
+      StopServo(0,servoStartTime[0],servoUpDown[0]);
+      StopServo(2,servoStartTime[2],servoUpDown[2]);
     }
     
     if (abs(abs(yVal)-abs(DEFY)) > TOL) {
@@ -307,19 +293,8 @@ void adjust() {
         }
       }
     } else {
-      servo[1].write(STOP);
-      if(servoUpDown[1] == 1){
-        servoTime[1]+=millis()-servoStartTime[1];
-      } else {
-        servoTime[1]-=millis()-servoStartTime[1];
-      }
-      
-      servo[3].write(STOP);
-      if(servoUpDown[3] == 1){
-        servoTime[3]+=millis()-servoStartTime[3];
-      } else {
-        servoTime[3]-=millis()-servoStartTime[3];
-      }
+      StopServo(1,servoStartTime[1],servoUpDown[1]);
+      StopServo(3,servoStartTime[3],servoUpDown[3]);
     }
     
     temp1 = read(X_H);
@@ -330,32 +305,19 @@ void adjust() {
     temp2 = read(Y_L);
     yVal = (temp1 << 8) | (temp2 & 0xff);
   }
-  servo[0].write(STOP);
-  if(servoUpDown[0] == 1){
-    servoTime[0]+=millis()-servoStartTime[0];
-  } else {
-    servoTime[0]-=millis()-servoStartTime[0];
+  
+  for(int i=0;i<4;i++){
+    StopServo(i,servoStartTime[i],servoUpDown[i]);
   }
   
-  servo[1].write(STOP);
-  if(servoUpDown[1] == 1){
-    servoTime[1]+=millis()-servoStartTime[1];
+}
+
+unsigned long StopServo(int servoNum, unsigned long servoStartTime, bool servoUpDown){
+  servo[servoNum].write(STOP);
+  if(servoUpDown == 1){
+    servoTime[servoNum]+=millis()-servoStartTime;
   } else {
-    servoTime[1]-=millis()-servoStartTime[1];
-  }
-  
-  servo[2].write(STOP);
-  if(servoUpDown[2] == 1){
-    servoTime[2]+=millis()-servoStartTime[2];
-  } else {
-    servoTime[2]-=millis()-servoStartTime[2];
-  }
-  
-  servo[3].write(STOP);
-  if(servoUpDown[3] == 1){
-    servoTime[3]+=millis()-servoStartTime[3];
-  } else {
-    servoTime[3]-=millis()-servoStartTime[3];
+    servoTime[servoNum]-=millis()-servoStartTime;
   }
 }
 
