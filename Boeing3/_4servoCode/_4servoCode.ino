@@ -61,7 +61,7 @@ void setup() {
 	// Init serial to write to terminal
 	Serial.begin(BAUD);
 
-	// Init mission as flying
+	// Init mission as landed
 	mission = landed;
 
 	// Init the servos
@@ -322,6 +322,7 @@ void adjust() {
     temp1 = read(Y_H);
     temp2 = read(Y_L);
     yVal = (temp1 << 8) | (temp2 & 0xff);
+    GetSwitchState();
   }
 
   for(int i=0;i<4;i++){
