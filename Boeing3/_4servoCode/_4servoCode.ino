@@ -3,7 +3,7 @@
 
 #define UP 100
 #define STOP 90
-#define DOWN 87
+#define DOWN 0
 #define MAXTIME 3000
 #define BAUD 9600
 #define DEFX -800
@@ -168,6 +168,8 @@ void loop() {
 				if( ~switchState )
 					break;
 			}
+		} else {
+      adjust();
 		}
 	}  else if (mission == landing){
 		runTime = millis();
@@ -244,32 +246,37 @@ void adjust() {
 
   // I think this should continue until switchState == B0000 (i.e. none of the switches are pressed) and then as soon as it exits, 
   // all of the legs should retract completely, as it should be flying at that point. Call loop(). Sound right?
-  while(switchState != B0000 /*abs(abs(xVal)-abs(DEFX)) > TOL || abs(abs(yVal)-abs(DEFY)) > TOL*/) { 
+  while(switchState != B1111 /*abs(abs(xVal)-abs(DEFX)) > TOL || abs(abs(yVal)-abs(DEFY)) > TOL*/) { 
     if(abs(abs(xVal)-abs(DEFX)) > TOL) { 
       if(xVal < DEFX) { 
         if(servoTime[0] < MAXTIME) {
+          Serial.println("Servo[0] going up");
           servo[0].write(UP);
           servoStartTime[0] = millis();
           servoUpDown[0] = 1;
         }
         if(servoTime[2] > 0){
+          Serial.println("Servo[2] going down");
           servo[2].write(DOWN);
           servoStartTime[2] = millis();
           servoUpDown[2] = 0;
         }
       } else if (xVal > DEFX) {
         if(servoTime[0] > 0) {
+          Serial.println("Servo[0] going down");
           servo[0].write(DOWN);
           servoStartTime[0] = millis();
           servoUpDown[0] = 0;
         }
         if(servoTime[2] < MAXTIME){
+          Serial.println("Servo[2] going up");
           servo[2].write(UP);
           servoStartTime[2] = millis();
           servoUpDown[2] = 1;
         }
       }
     } else {
+      Serial.println("Servo[0] and servo[2] stopping");
       StopServo(0,servoStartTime[0],servoUpDown[0]);
       StopServo(2,servoStartTime[2],servoUpDown[2]);
     }
@@ -277,28 +284,33 @@ void adjust() {
     if (abs(abs(yVal)-abs(DEFY)) > TOL) {
       if(yVal < DEFY) { 
         if(servoTime[1] < MAXTIME) {
+          Serial.println("Servo[1] going up");
           servo[1].write(UP);
           servoStartTime[1] = millis();
           servoUpDown[1] = 1;
         }
         if(servoTime[3] > 0){
+          Serial.println("Servo[3] going down");
           servo[3].write(DOWN);
           servoStartTime[3] = millis();
           servoUpDown[3] = 0;
         }
       } else if (yVal > DEFY) {
         if(servoTime[1] > 0) {
+          Serial.println("Servo[1] going down");
           servo[1].write(DOWN);
           servoStartTime[1] = millis();
           servoUpDown[1] = 0;
         }
         if(servoTime[3] < MAXTIME){
+          Serial.println("Servo[3] going up");
           servo[3].write(UP);
           servoStartTime[3] = millis();
           servoUpDown[3] = 1;
         }
       }
     } else {
+      Serial.println("Servo[1] and servo[3] stopping");
       StopServo(1,servoStartTime[1],servoUpDown[1]);
       StopServo(3,servoStartTime[3],servoUpDown[3]);
     }
@@ -313,6 +325,9 @@ void adjust() {
   }
 
   for(int i=0;i<4;i++){
+    Serial.print("Servo[");
+    Serial.print(i);
+    Serial.println("] is stopping");
     StopServo(i,servoStartTime[i],servoUpDown[i]);
   }
   
