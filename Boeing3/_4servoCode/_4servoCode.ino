@@ -6,10 +6,10 @@
 #define DOWN 0
 #define MAXTIME 3000
 #define BAUD 9600
-#define DEFX -800
-#define DEFY -80
-#define DEFZ 15700
-#define TOL 800
+#define DEFX 0
+#define DEFY 0
+#define DEFZ 0
+#define TOL 350
 #define X_H 0x3B
 #define X_L 0x3C
 #define Y_H 0x3D
@@ -85,6 +85,13 @@ void setup() {
 	digitalWrite(4, HIGH);
 	digitalWrite(5, HIGH);
 	digitalWrite(6, HIGH);
+
+  write(0x13,0);
+  write(0x14,0);
+  write(0x15,0);
+  write(0x16,0);
+  write(0x17,0);
+  write(0x18,0);
 }
 
 void loop() {
