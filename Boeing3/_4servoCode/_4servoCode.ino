@@ -193,7 +193,7 @@ void loop() {
                         
                         Serial.println("Stop 0");
 			if( !servoTime[0] )
-				servoTime[0] = (millis() - Time);
+				servoTime[0] = 4*(millis() - Time);
     
 		}
     
@@ -203,7 +203,7 @@ void loop() {
 
                         Serial.println("Stop 1");
 			if( !servoTime[1] )
-				servoTime[1] = (millis() - Time);
+				servoTime[1] = 4*(millis() - Time);
     
 		}
 
@@ -213,7 +213,7 @@ void loop() {
 
                         Serial.println("Stop 2");
 			if( !servoTime[2] )
-				servoTime[2] = (millis() - Time);
+				servoTime[2] = 4*(millis() - Time);
     
 		}
 
@@ -223,7 +223,7 @@ void loop() {
 
                         Serial.println("Stop 3");
 			if( !servoTime[3] )
-				servoTime[3] = (millis() - Time);
+				servoTime[3] = 4*(millis() - Time);
     
 		} 
 	}
@@ -257,12 +257,18 @@ void adjust() {
   while(switchState != B1111 /*abs(abs(xVal)-abs(DEFX)) > TOL || abs(abs(yVal)-abs(DEFY)) > TOL*/) { 
     if(abs(abs(xVal)-abs(DEFX)) > TOL) { 
       if(xVal < DEFX) { 
+        Serial.print("Servo[0] time: ");
+        Serial.println(servoTime[0]);
+        delay(1000);
         if(servoTime[0] < MAXTIME) {
           Serial.println("Servo[0] going up");
           servo[0].write(UP);
           servoStartTime[0] = millis();
           servoUpDown[0] = 1;
         }
+        Serial.print("Servo[2] time: ");
+        Serial.println(servoTime[2]);
+        delay(1000);
         if(servoTime[2] > 0){
           Serial.println("Servo[2] going down");
           servo[2].write(DOWNA);
@@ -270,12 +276,18 @@ void adjust() {
           servoUpDown[2] = 0;
         }
       } else if (xVal > DEFX) {
+        Serial.print("Servo[0] time: ");
+        Serial.println(servoTime[0]);
+        delay(1000);
         if(servoTime[0] > 0) {
           Serial.println("Servo[0] going down");
           servo[0].write(DOWNA);
           servoStartTime[0] = millis();
           servoUpDown[0] = 0;
         }
+        Serial.print("Servo[2] time: ");
+        Serial.println(servoTime[2]);
+        delay(1000);
         if(servoTime[2] < MAXTIME){
           Serial.println("Servo[2] going up");
           servo[2].write(UP);
@@ -291,12 +303,18 @@ void adjust() {
     
     if (abs(abs(yVal)-abs(DEFY)) > TOL) {
       if(yVal < DEFY) { 
+        Serial.print("Servo[1] time: ");
+        Serial.println(servoTime[1]);
+        delay(1000);
         if(servoTime[1] < MAXTIME) {
           Serial.println("Servo[1] going up");
           servo[1].write(UP);
           servoStartTime[1] = millis();
           servoUpDown[1] = 1;
         }
+        Serial.print("Servo[3] time: ");
+        Serial.println(servoTime[3]);
+        delay(1000);
         if(servoTime[3] > 0){
           Serial.println("Servo[3] going down");
           servo[3].write(DOWNA);
@@ -304,12 +322,18 @@ void adjust() {
           servoUpDown[3] = 0;
         }
       } else if (yVal > DEFY) {
+        Serial.print("Servo[1] time: ");
+        Serial.println(servoTime[1]);
+        delay(1000);
         if(servoTime[1] > 0) {
           Serial.println("Servo[1] going down");
           servo[1].write(DOWNA);
           servoStartTime[1] = millis();
           servoUpDown[1] = 0;
         }
+        Serial.print("Servo[3] time: ");
+        Serial.println(servoTime[3]);
+        delay(1000);
         if(servoTime[3] < MAXTIME){
           Serial.println("Servo[3] going up");
           servo[3].write(UP);
