@@ -4,6 +4,7 @@
 #define UP 100
 #define STOP 90
 #define DOWN 0
+#define DOWNA 80
 #define MAXTIME 3000
 #define BAUD 9600
 #define DEFX 0
@@ -264,14 +265,14 @@ void adjust() {
         }
         if(servoTime[2] > 0){
           Serial.println("Servo[2] going down");
-          servo[2].write(DOWN);
+          servo[2].write(DOWNA);
           servoStartTime[2] = millis();
           servoUpDown[2] = 0;
         }
       } else if (xVal > DEFX) {
         if(servoTime[0] > 0) {
           Serial.println("Servo[0] going down");
-          servo[0].write(DOWN);
+          servo[0].write(DOWNA);
           servoStartTime[0] = millis();
           servoUpDown[0] = 0;
         }
@@ -298,14 +299,14 @@ void adjust() {
         }
         if(servoTime[3] > 0){
           Serial.println("Servo[3] going down");
-          servo[3].write(DOWN);
+          servo[3].write(DOWNA);
           servoStartTime[3] = millis();
           servoUpDown[3] = 0;
         }
       } else if (yVal > DEFY) {
         if(servoTime[1] > 0) {
           Serial.println("Servo[1] going down");
-          servo[1].write(DOWN);
+          servo[1].write(DOWNA);
           servoStartTime[1] = millis();
           servoUpDown[1] = 0;
         }
