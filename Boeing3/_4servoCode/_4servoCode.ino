@@ -32,7 +32,7 @@ status mission = flying;
 //    -servo[1] should be positive, servo[3] should be negative
 Servo servo[4];
 byte switchState;
-unsigned long servoTime[4];
+signed long servoTime[4];
 
 byte read(int reg)
 {
@@ -108,7 +108,7 @@ void loop() {
       
         //delay(100);
         
-        unsigned long Time, runTime;
+        signed long Time, runTime;
 
 	
   // Pin 3 == servo[0]
@@ -247,51 +247,63 @@ void adjust() {
   temp2 = read(Y_L);
   yVal = (temp1 << 8) | (temp2 & 0xff);
 
-  unsigned long servoStartTime[4];
+  signed long servoStartTime[4] = {0,0,0,0};
   bool servoUpDown[4];
 
   GetSwitchState();
 
   // I think this should continue until switchState == B0000 (i.e. none of the switches are pressed) and then as soon as it exits, 
   // all of the legs should retract completely, as it should be flying at that point. Call loop(). Sound right?
-  while(switchState != B1111 /*abs(abs(xVal)-abs(DEFX)) > TOL || abs(abs(yVal)-abs(DEFY)) > TOL*/) { 
+  while(switchState != B1111) { 
     if(abs(abs(xVal)-abs(DEFX)) > TOL) { 
       if(xVal < DEFX) { 
         Serial.print("Servo[0] time: ");
         Serial.println(servoTime[0]);
         delay(1000);
-        if(servoTime[0] < MAXTIME) {
+        UpdateServoTime(servoUpDown[0],0, servoStartTime[0]);
+        if(servoTime[0] < 2*MAXTIME) {
           Serial.println("Servo[0] going up");
           servo[0].write(UP);
-          servoStartTime[0] = millis();
+          if(!servoStartTime[0]){
+            servoStartTime[0] = millis();
+          }
           servoUpDown[0] = 1;
         }
         Serial.print("Servo[2] time: ");
         Serial.println(servoTime[2]);
         delay(1000);
+        UpdateServoTime(servoUpDown[2],2, servoStartTime[2]);
         if(servoTime[2] > 0){
           Serial.println("Servo[2] going down");
           servo[2].write(DOWNA);
-          servoStartTime[2] = millis();
+          if(!servoStartTime[2]){
+            servoStartTime[2] = millis();
+          }
           servoUpDown[2] = 0;
         }
       } else if (xVal > DEFX) {
         Serial.print("Servo[0] time: ");
         Serial.println(servoTime[0]);
         delay(1000);
+        UpdateServoTime(servoUpDown[0],0, servoStartTime[0]);
         if(servoTime[0] > 0) {
           Serial.println("Servo[0] going down");
           servo[0].write(DOWNA);
-          servoStartTime[0] = millis();
+          if(!servoStartTime[0]){
+            servoStartTime[0] = millis();
+          }
           servoUpDown[0] = 0;
         }
         Serial.print("Servo[2] time: ");
         Serial.println(servoTime[2]);
         delay(1000);
-        if(servoTime[2] < MAXTIME){
+        UpdateServoTime(servoUpDown[2],2, servoStartTime[2]);
+        if(servoTime[2] < 2*MAXTIME){
           Serial.println("Servo[2] going up");
           servo[2].write(UP);
-          servoStartTime[2] = millis();
+          if(!servoStartTime[2]){
+            servoStartTime[2] = millis();
+          }
           servoUpDown[2] = 1;
         }
       }
@@ -299,6 +311,8 @@ void adjust() {
       Serial.println("Servo[0] and servo[2] stopping");
       StopServo(0,servoStartTime[0],servoUpDown[0]);
       StopServo(2,servoStartTime[2],servoUpDown[2]);
+      servoStartTime[0] = 0;
+      servoStartTime[2] = 0;
     }
     
     if (abs(abs(yVal)-abs(DEFY)) > TOL) {
@@ -306,38 +320,50 @@ void adjust() {
         Serial.print("Servo[1] time: ");
         Serial.println(servoTime[1]);
         delay(1000);
-        if(servoTime[1] < MAXTIME) {
+        UpdateServoTime(servoUpDown[1],1, servoStartTime[1]);
+        if(servoTime[1] < 2*MAXTIME) {
           Serial.println("Servo[1] going up");
           servo[1].write(UP);
-          servoStartTime[1] = millis();
+          if(!servoStartTime[1]){
+            servoStartTime[1] = millis();
+          }
           servoUpDown[1] = 1;
         }
         Serial.print("Servo[3] time: ");
         Serial.println(servoTime[3]);
         delay(1000);
+        UpdateServoTime(servoUpDown[3],3, servoStartTime[3]);
         if(servoTime[3] > 0){
           Serial.println("Servo[3] going down");
           servo[3].write(DOWNA);
-          servoStartTime[3] = millis();
+          if(!servoStartTime[3]){
+            servoStartTime[3] = millis();
+          }
           servoUpDown[3] = 0;
         }
       } else if (yVal > DEFY) {
         Serial.print("Servo[1] time: ");
         Serial.println(servoTime[1]);
         delay(1000);
+        UpdateServoTime(servoUpDown[1], 1, servoStartTime[1]);
         if(servoTime[1] > 0) {
           Serial.println("Servo[1] going down");
           servo[1].write(DOWNA);
-          servoStartTime[1] = millis();
+          if(!servoStartTime[1]){
+            servoStartTime[1] = millis();
+          }
           servoUpDown[1] = 0;
         }
         Serial.print("Servo[3] time: ");
         Serial.println(servoTime[3]);
         delay(1000);
-        if(servoTime[3] < MAXTIME){
+        UpdateServoTime(servoUpDown[3], 3, servoStartTime[3]);
+        if(servoTime[3] < 2*MAXTIME){
           Serial.println("Servo[3] going up");
           servo[3].write(UP);
-          servoStartTime[3] = millis();
+          if(!servoStartTime[3]){
+            servoStartTime[3] = millis();
+          }
           servoUpDown[3] = 1;
         }
       }
@@ -345,6 +371,8 @@ void adjust() {
       Serial.println("Servo[1] and servo[3] stopping");
       StopServo(1,servoStartTime[1],servoUpDown[1]);
       StopServo(3,servoStartTime[3],servoUpDown[3]);
+      servoStartTime[1] = 0;
+      servoStartTime[3] = 0;
     }
     
     temp1 = read(X_H);
@@ -366,13 +394,9 @@ void adjust() {
   
 }
 
-unsigned long StopServo(int servoNum, unsigned long servoStartTime, bool servoUpDown){
+void StopServo(int servoNum, signed long servoStartTime, bool servoUpDown){
   servo[servoNum].write(STOP);
-  if(servoUpDown == 1){
-    servoTime[servoNum]+=millis()-servoStartTime;
-  } else {
-    servoTime[servoNum]-=millis()-servoStartTime;
-  }
+  UpdateServoTime(servoUpDown,servoNum, servoStartTime);
 }
 
 void GetSwitchState(){
@@ -381,5 +405,13 @@ void GetSwitchState(){
   switchState |= digitalRead(4) << 1; //servo[1]
   switchState |= digitalRead(5) << 2; //servo[2]
   switchState |= digitalRead(6) << 3; //servo[3]
+}
+
+void UpdateServoTime(bool servoUpDown, int servoNum, signed long servoStartTime){
+  if(servoUpDown == 1){
+    servoTime[servoNum]-=millis()-servoStartTime;
+  } else {
+    servoTime[servoNum]+=millis()-servoStartTime;
+  }
 }
 
